@@ -79,3 +79,13 @@ If the tests reveal formatting problems with the examples, you can fix them with
 ```bash
 npm run format-examples
 ```
+
+# ml-aoi STAC Extension
+
+Central choices and rational behind them is outlined in the ADR format:
+
+| ID   | ADR |
+|------|-----|
+| 0002 | [Use Case](docs/0002-use-case-definition.md) |
+| 0003 | [Test/Train/Validation Split](docs/0003-test-train-validation-split.md) |
+| 0004 | [Sourcing Multiple Label Items](docs/0004-multiple-label-items.md) |
