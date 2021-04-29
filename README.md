@@ -127,7 +127,7 @@ If the tests reveal formatting problems with the examples, you can fix them with
 npm run format-examples
 ```
 
-# ml-aoi STAC Extension
+# Design Decisions
 
 Central choices and rational behind them is outlined in the ADR format:
 
