@@ -1,38 +1,39 @@
-# Template Extension Specification
+# STAC ML AOI Extension
 
-- **Title:** Template
-- **Identifier:** <https://stac-extensions.github.io/template/v1.0.0/schema.json>
-- **Field Name Prefix:** template
+- **Title:** ML AOI
+- **Identifier:** <https://stac-extensions.github.io/ml-aoi/v1.0.0/schema.json>
+- **Field Name Prefix:** ml-aoi
 - **Scope:** Item, Collection
 - **Extension [Maturity Classification](https://github.com/radiantearth/stac-spec/tree/master/extensions/README.md#extension-maturity):** Proposal
-- **Owner**: @your-gh-handles @person2
+- **Owner**: @jisantuc
 
-This document explains the Template Extension to the [SpatioTemporal Asset Catalog](https://github.com/radiantearth/stac-spec) (STAC) specification.
-This is the place to add a short introduction.
+This document explains the ML AOI Extension to the [SpatioTemporal Asset Catalog](https://github.com/radiantearth/stac-spec) (STAC) specification.
 
-- Examples:
-  - [Item example](examples/item.json): Shows the basic usage of the extension in a STAC Item
-  - [Collection example](examples/collection.json): Shows the basic usage of the extension in a STAC Collection
-- [JSON Schema](json-schema/schema.json)
-- [Changelog](./CHANGELOG.md)
+An Item and Collection extension to provide labeled training data for machine learning models.
+This extension relies on but is distinct from existing `label` extension.
+STAC items using `label` extension link label assets with the source imagery for which they are valid, often as result of human labelling effort.
+By contrast STAC items using `ml-aoi` extension link label assets with raster items for each specific machine learning model is being trained.
+
+In addition to linking labels with feature items the `ml-aoi` extension addresses some of the common configurations for ML workflows.
+The use of this extension is intended to make model training process reproducible as well as providing model provenance once the model is trained.
 
 ## Item Properties and Collection Fields
 
 | Field Name           | Type                      | Description |
 | -------------------- | ------------------------- | ----------- |
-| template:new_field   | string                    | **REQUIRED**. Describe the required field... |
-| template:xyz         | [XYZ Object](#xyz-object) | Describe the field... |
-| template:another_one | \[number]                 | Describe the field... |
+| `ml-aoi:split`       | string                    | Assigns item to one of `train`, `test`, or `validate` sets |
 
 ### Additional Field Information
 
-#### template:new_field
+#### ml-aoi:split
 
-This is a much more detailed description of the field `template:new_field`...
+This field is optional. If not provided, its expected that the split property will be added later before consuming the items.
 
-### XYZ Object
+#### bbox and geometry
 
-This is the introduction for the purpose and the content of the XYZ Object...
+* `ml-aoi` Multiple items may reference the same label and image item by scoping the `bbox` and `geometry` fields. TODO: Better describe scoping of overlap between raster and label items?
+* `ml-aoi` Items `bbox` field may overlap when they belong to different `ml-aoi:split` set.
+* `ml-aoi` Items in the same Collection should never have overlapping `geometry` fields.
 
 | Field Name  | Type   | Description |
 | ----------- | ------ | ----------- |
