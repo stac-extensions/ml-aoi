@@ -1,7 +1,7 @@
 # STAC ML AOI Extension
 
 - **Title:** ML AOI
-- **Identifier:** <https://stac-extensions.github.io/ml-aoi/v1.0.0/schema.json>
+- **Identifier:** <https://stac-extensions.github.io/ml-aoi/v0.1.0/schema.json>
 - **Field Name Prefix:** ml-aoi
 - **Scope:** Item, Collection
 - **Extension [Maturity Classification](https://github.com/radiantearth/stac-spec/tree/master/extensions/README.md#extension-maturity):** Proposal
