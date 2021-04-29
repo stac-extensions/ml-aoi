@@ -1,7 +1,5 @@
----
-id: 0002-use-case-definition
-title: 2 - Use Case
----
+# 2. Us- case definition
+
 Date: 2020-08-10
 
 ## Status
@@ -31,7 +29,8 @@ For instance it is possible to apply a single source of ground-truth building la
 `ml-aoi` Item links to both raster STAC item and label STAC item.
 In this relationship the source raster and label items are static and long lived, being used by several `ml-aoi` catalogs.
 By contrast `ml-aoi` catalog is somewhat ephemeral, it captures the training set in order to provide model reproducibility and provenance.
-There can be any number of `ml-aoi` catalogs linking to the same raster and label items, while varying selection, training/testing/validation split and class configuration.
+There can be any number of `ml-aoi` catalogs linking to the same raster and label items, while varying selection, training/testing/validation split 
+and class configuration.
 
 ## Decision
 

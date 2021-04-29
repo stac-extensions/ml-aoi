@@ -1,7 +1,5 @@
----
-id: 0003-multiple-label-items
-title: 1 - Multiple Label Items
----
+# 4. Multiple label items
+
 Date: 2020-08-11
 
 ## Status
@@ -15,7 +13,7 @@ This would be a useful feature for training multi-class classifiers.
 One can imagine having a label STAC item for buildings and separate STAC item for fields.
 STAC Items Links object is an array, so many label items could be linked to from a single `ml-aoi` STAC Item.
 
-#### Limiting to single label link
+### Limiting to single label link
 
 Limiting to single label link however is appealing because the label item metadata could be copied over to `ml-aoi` Item.
 This would remove the need to follow the link for the label item during processing.
@@ -25,7 +23,7 @@ If multi-class label dataset would be required there would have to be a mechanic
 existing labels into a single STAC `label` item. This could mean either union of GeoJSON FeatureCollections per item or
 a configuration of a more complex STAC `label` Item that links to multiple label assets.
 
-#### Allowing multiple labels
+### Allowing multiple labels
 
 The main appeal of consuming multi-label `ml-aoi` items is that it would allow referencing multiple label sources,
 some which could be external, without the need for pre-processing and thus minimizing data duplication.

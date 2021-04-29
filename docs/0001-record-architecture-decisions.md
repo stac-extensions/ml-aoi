@@ -1,7 +1,5 @@
----
-id: 0001-record-architecture-decisions
-title: 1 - Recording Architecture Decisions
----
+# 1. Record architecture decisions
+
 Date: 2020-08-08
 
 ## Status

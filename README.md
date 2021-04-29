@@ -31,16 +31,19 @@ This field is optional. If not provided, its expected that the split property wi
 
 #### bbox and geometry
 
-* `ml-aoi` Multiple items may reference the same label and image item by scoping the `bbox` and `geometry` fields. TODO: Better describe scoping of overlap between raster and label items?
-* `ml-aoi` Items `bbox` field may overlap when they belong to different `ml-aoi:split` set.
-* `ml-aoi` Items in the same Collection should never have overlapping `geometry` fields.
+- `ml-aoi` Multiple items may reference the same label and image item by scoping the `bbox` and `geometry` fields. TODO: Better describe scoping 
+   of overlap between raster and label items?
+- `ml-aoi` Items `bbox` field may overlap when they belong to different `ml-aoi:split` set.
+- `ml-aoi` Items in the same Collection should never have overlapping `geometry` fields.
 
 ## Links
 
 `ml-aoi` Item must link to both label and raster STAC items valid for its area of interest.
 These Link objects should set `rel` field to `derived_from` for both label and feature items.
 
-`ml-aoi` Item should be contain enough metadata to make it consumable without the need for following the label and feature link item links. In reality this may not be practical because the use-case may not be fully known at the time the Item is generated. Therefore it is critical that source label and feature items are linked to provide the future consumer the option to collect additional metadata from them.
+`ml-aoi` Item should be contain enough metadata to make it consumable without the need for following the label and feature link item links. In 
+reality this may not be practical because the use-case may not be fully known at the time the Item is generated. Therefore it is critical that 
+source label and feature items are linked to provide the future consumer the option to collect additional metadata from them.
 
 | Field Name    | Type   | Name | Description                 |
 | ------------- | ------ | ---- | --------------------------- |
@@ -127,7 +130,7 @@ If the tests reveal formatting problems with the examples, you can fix them with
 npm run format-examples
 ```
 
-# Design Decisions
+## Design Decisions
 
 Central choices and rational behind them is outlined in the ADR format:
 
