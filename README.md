@@ -1,4 +1,4 @@
-# STAC ML AOI Extension
+# ML AOI Extension
 
 - **Title:** ML AOI
 - **Identifier:** <https://stac-extensions.github.io/ml-aoi/v0.1.0/schema.json>
@@ -10,12 +10,12 @@
 This document explains the ML AOI Extension to the [SpatioTemporal Asset Catalog](https://github.com/radiantearth/stac-spec) (STAC) specification.
 
 An Item and Collection extension to provide labeled training data for machine learning models.
-This extension relies on but is distinct from existing `label` extension.
-STAC items using `label` extension link label assets with the source imagery for which they are valid, often as result of human labelling effort.
-By contrast STAC items using `ml-aoi` extension link label assets with raster items for each specific machine learning model is being trained.
+This extension relies on but is distinct from the existing `label` extension.
+STAC items using the `label` extension link label assets with the source imagery for which they are valid, often as result of human labelling effort.
+By contrast STAC items using `ml-aoi` extension link label assets with raster items for each specific machine learning model that is being trained.
 
 In addition to linking labels with feature items the `ml-aoi` extension addresses some of the common configurations for ML workflows.
-The use of this extension is intended to make model training process reproducible as well as providing model provenance once the model is trained.
+The use of this extension is intended to make the model training process reproducible as well as providing model provenance once the model is trained.
 
 ## Item Properties and Collection Fields
 
@@ -27,7 +27,7 @@ The use of this extension is intended to make model training process reproducibl
 
 #### ml-aoi:split
 
-This field is optional. If not provided, its expected that the split property will be added later before consuming the items.
+This field is optional. If not provided, it is expected that the split property will be added later before consuming the items.
 
 #### bbox and geometry
 
