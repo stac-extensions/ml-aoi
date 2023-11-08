@@ -63,8 +63,7 @@
       },
       "patternProperties": {
         "^(?!ml-aoi:)": {}
-      },
-      "additionalProperties": false
+      }
     }
   }
 }
