@@ -5,6 +5,49 @@
   "description": "ML AOI Extension for STAC Items.",
   "oneOf": [
     {
+      "$comment": "This is the schema for STAC Collections.",
+      "allOf": [
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "Collection"
+            },
+            "summaries": {
+              "type": "object",
+              "properties": {
+                "ml-aoi:split": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/fields/properties/ml-aoi:split"
+                  }
+                }
+              }
+            },
+            "assets": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/fields"
+              }
+            },
+            "item_assets": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/fields"
+              }
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/stac_extensions"
+        }
+      ]
+    },
+    {
+      "$comment": "This is the schema for STAC Items.",
       "allOf": [
         {
           "type": "object",
@@ -59,6 +102,33 @@
         "ml-aoi:split": {
           "type": "string",
           "enum": ["train", "test", "validate"]
+        },
+        "ml-aoi:role": {
+          "type": "string",
+          "enum": ["label", "feature"]
+        },
+        "ml-aoi:reference-grid": {
+          "type": "boolean"
+        },
+        "ml-aoi:resampling-method": {
+          "$comment": "Supported GDAL resampling method (https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-r)",
+          "type": "string",
+          "enum": [
+              "near",
+              "bilinear",
+              "cubic",
+              "cubcspline",
+              "lanczos",
+              "average",
+              "rms",
+              "mode",
+              "max",
+              "min",
+              "med",
+              "q1",
+              "q3",
+              "sum"
+          ]
         }
       },
       "patternProperties": {
