@@ -16,6 +16,7 @@ from typing import (
     Literal,
     MutableMapping,
     Optional,
+    Protocol,
     Type,
     TypeVar,
     Union,
@@ -48,6 +49,8 @@ from pystac.extensions.hooks import ExtensionHooks
 
 T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.AssetDefinition)
 SchemaName = Literal["ml-aoi"]
+
+AnySummary = Union[list[Any], pystac.RangeSummary[Any], dict[str, Any], None]
 
 _PROJECT_ROOT = os.path.abspath(os.path.join(__file__, "../../.."))
 ML_AOI_SCHEMA_PATH = os.path.join(_PROJECT_ROOT, "json-schema/schema.json")
@@ -145,16 +148,29 @@ class ML_AOI_LinkFields(ML_AOI_BaseFields, validate_assignment=True):
 #     def model(self) -> ML_AOI_BaseFields:
 #         raise NotImplementedError
 
+class ML_AOI_MetaClass(Protocol):
+    model: ML_AOI_BaseFields
+
 
 class ML_AOI_Extension(
+    ML_AOI_MetaClass,
     Generic[T],
     ExtensionManagementMixin[Union[pystac.Asset, pystac.Item, pystac.Collection]],
     abc.ABC,
 ):
-    @property
     @abc.abstractmethod
-    def model(self) -> Type[ML_AOI_BaseFields]:
+    def get_ml_aoi_property(self, prop_name: str, _ml_aoi_required: bool) -> Any:
         raise NotImplementedError
+
+    @abc.abstractmethod
+    def set_ml_aoi_property(self, prop_name: str, value: Any, _ml_aoi_required: bool) -> None:
+        raise NotImplementedError
+
+    def __getitem__(self, prop_name):
+        return self.get_ml_aoi_property(prop_name, _ml_aoi_required=False)
+
+    def __setattr__(self, prop_name, value):
+        self.set_ml_aoi_property(prop_name, value, _ml_aoi_required=False)
 
     @classmethod
     def _is_ml_aoi_property(cls, prop_name: str):
@@ -226,10 +242,15 @@ class ML_AOI_Extension(
             raise pystac.ExtensionTypeError(
                 f"Cannot use {fields.__class__.__name__} with STAC Object {obj.STAC_OBJECT_TYPE}"
             )
-        data_json = json.loads(fields.model_dump_json(by_alias=True))
+        data_json = json.loads(fields.model_dump_json(by_alias=False))
         prop_setter = getattr(self, "_set_property", None) or getattr(self, "_set_summary", None)
-        for prop, val in data_json.items():
-            prop_setter(self, prop, val)
+        if not prop_setter:
+            raise pystac.ExtensionTypeError(
+                f"Invalid {self._ext_error_message(self)} implementation "
+                f"does not provide any property or summary setter method."
+            )
+        for field, val in data_json.items():
+            prop_setter(field, val)
 
     @classmethod
     def get_schema_uri(cls) -> str:
@@ -285,8 +306,9 @@ class ML_AOI_PropertiesExtension(
         return self.properties.get(prop_name)
 
     def set_ml_aoi_property(self, prop_name: str, value: Any, _ml_aoi_required: bool = True) -> None:
-        found = self._retrieve_ml_aoi_property(prop_name, _ml_aoi_required)
-        if found:
+        field = self._retrieve_ml_aoi_property(prop_name, _ml_aoi_required)
+        if field:
+            prop_name = field.alias or prop_name
             self._validate_ml_aoi_property(prop_name, value)
         super()._set_property(prop_name, value)
 
@@ -297,12 +319,6 @@ class ML_AOI_PropertiesExtension(
             self.set_ml_aoi_property(prop_name, pop_if_none, _ml_aoi_required=True)
         else:
             super()._set_property(prop_name, pop_if_none)
-
-    def __getitem__(self, prop_name):
-        return self.get_ml_aoi_property(prop_name, _ml_aoi_required=False)
-
-    def __setattr__(self, prop_name, value):
-        self.set_ml_aoi_property(prop_name, value, _ml_aoi_required=False)
 
 
 class ML_AOI_ItemExtension(
@@ -433,26 +449,64 @@ class ML_AOI_SummariesExtension(
     """
     model = ML_AOI_CollectionFields
 
+    collection: pystac.Collection
     summaries: pystac.Summaries
 
     def __init__(self, collection: pystac.Collection):
-        SummariesExtension.__init__(self, collection)
+        self.collection = collection
+        super().__init__(collection)
 
-    def get_ml_aoi_property(self, prop_name: str, _ml_aoi_required: bool = True) -> list[Any]:
-        self._retrieve_ml_aoi_property(prop_name, _ml_aoi_required)
-        return self.summaries.get_list(prop_name)
+    def get_ml_aoi_property(
+        self,
+        prop_name: str,
+        _ml_aoi_required: bool = True,
+    ) -> AnySummary:
+        found = self._retrieve_ml_aoi_property(prop_name, _ml_aoi_required)
+        if found or _ml_aoi_required:
+            return self.summaries.get_list(prop_name)
+        return object.__getattribute__(self, prop_name)
 
-    def set_ml_aoi_property(self, prop_name: str, summaries: list[Any], _ml_aoi_required: bool = True) -> None:
-        self._retrieve_ml_aoi_property(prop_name, _ml_aoi_required)
-        for summary in summaries:
-            self._validate_ml_aoi_property(prop_name, summary)
-        self._set_summary(prop_name, summaries)
+    def set_ml_aoi_property(
+        self,
+        prop_name: str,
+        value: AnySummary,
+        _ml_aoi_required: bool = True,
+    ) -> None:
+        # if _ml_aoi_required and not hasattr(value, "__iter__") or isinstance(value, str):
+        #     raise pystac.ExtensionTypeError(
+        #         "Summaries value must be an iterable container such as a list, "
+        #         f"received '{value.__class__.__name__}' is invalid."
+        #     )
+
+        field = self._retrieve_ml_aoi_property(prop_name, _ml_aoi_required)
+        if field or _ml_aoi_required:
+            # prop_name = field.alias or prop_name
+            for summary in value:
+                self._validate_ml_aoi_property(prop_name, summary)
+            prop_name = field.alias or prop_name
+            super()._set_summary(prop_name, value)
+        else:
+            object.__setattr__(self, prop_name, value)
+
+    def _set_summary(
+        self,
+        prop_name: str,
+        summaries: Union[list[Any], pystac.RangeSummary[Any], dict[str, Any], None],
+    ) -> None:
+        if self._is_ml_aoi_property(prop_name):
+            self.set_ml_aoi_property(prop_name, summaries, _ml_aoi_required=True)
+        else:
+            super()._set_summary(prop_name, summaries)
 
 
-class ML_AOI_CollectionExtension(ML_AOI_Extension[pystac.Collection]):
+class ML_AOI_CollectionExtension(
+    ML_AOI_SummariesExtension,
+    ML_AOI_Extension[pystac.Collection]
+):
     model = ML_AOI_CollectionFields
 
     def __init__(self, collection: pystac.Collection):
+        ML_AOI_SummariesExtension.__init__(self, collection)
         self.collection = collection
         self.properties = collection.extra_fields
 
