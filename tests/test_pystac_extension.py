@@ -79,7 +79,7 @@ def test_ml_aoi_pystac_collection_with_apply_method(collection: pystac.Collectio
     assert ML_AOI_SCHEMA_URI in collection.stac_extensions
     collection.validate()
     ml_aoi_col_json = collection.to_dict()
-    assert ml_aoi_col_json["summaries"] == [{"ml-aoi:splits": "train"}]
+    assert ml_aoi_col_json["summaries"] == [{"ml-aoi:split": "train"}]
 
 
 def test_ml_aoi_pystac_collection_with_field_property(collection: pystac.Collection):
@@ -91,7 +91,7 @@ def test_ml_aoi_pystac_collection_with_field_property(collection: pystac.Collect
     assert ML_AOI_SCHEMA_URI in collection.stac_extensions
     collection.validate()
     ml_aoi_col_json = collection.to_dict()
-    assert ml_aoi_col_json["summaries"] == [{"ml-aoi:splits": "train"}]
+    assert ml_aoi_col_json["summaries"] == [{"ml-aoi:split": "train"}]
 
 
 def test_ml_aoi_pystac_item():

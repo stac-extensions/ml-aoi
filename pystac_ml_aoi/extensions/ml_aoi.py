@@ -63,8 +63,8 @@ ML_AOI_SCHEMA_URI: str = ML_AOI_SCHEMA["$id"]
 ML_AOI_PREFIX = f"{ML_AOI_SCHEMA_ID}:"
 ML_AOI_PROPERTY = f"{ML_AOI_SCHEMA_ID}_".replace("-", "_")
 
-ML_AOI_Splits = Literal["train", "validate", "test"]
-ML_AOI_Roles = Literal["label", "feature"]
+ML_AOI_Split = Literal["train", "validate", "test"]
+ML_AOI_Role = Literal["label", "feature"]
 ML_AOI_Resampling = Literal[
     "near",
     "bilinear",
@@ -119,17 +119,17 @@ class ML_AOI_BaseFields(BaseModel, validate_assignment=True):
 class ML_AOI_ItemProperties(ML_AOI_BaseFields, validate_assignment=True):
     """ML-AOI properties for STAC Items."""
 
-    split: Optional[ML_AOI_Splits]  # split is required since it is the only available field
+    split: Optional[ML_AOI_Split]  # split is required since it is the only available field
 
 
 class ML_AOI_CollectionFields(ML_AOI_BaseFields, validate_assignment=True):
     """ML-AOI properties for STAC Collections."""
 
-    split: Optional[ML_AOI_Splits]  # split is required since it is the only available field
+    split: Optional[ML_AOI_Split]  # split is required since it is the only available field
 
 
 class ML_AOI_AssetFields(ML_AOI_BaseFields, validate_assignment=True):
-    role: Optional[ML_AOI_Roles] = None
+    role: Optional[ML_AOI_Role] = None
     reference_grid: Optional[bool] = Field(alias="reference-grid", default=None)
     resampling_method: Optional[ML_AOI_Resampling] = Field(
         alias="resampling-method",
@@ -139,7 +139,7 @@ class ML_AOI_AssetFields(ML_AOI_BaseFields, validate_assignment=True):
 
 
 class ML_AOI_LinkFields(ML_AOI_BaseFields, validate_assignment=True):
-    role: Optional[ML_AOI_Roles]  # role is required since it is the only available field
+    role: Optional[ML_AOI_Role]  # role is required since it is the only available field
 
 
 # class ML_AOI_MetaClass(type, abc.ABC):
@@ -340,7 +340,7 @@ class ML_AOI_ItemExtension(
 
     def get_assets(
         self,
-        roles: Optional[List[ML_AOI_Roles]] = None,
+        roles: Optional[List[ML_AOI_Role]] = None,
         reference_grid: Optional[bool] = None,
         resampling_method: Optional[str] = None,
     ) -> dict[str, pystac.Asset]:
@@ -349,7 +349,7 @@ class ML_AOI_ItemExtension(
         Returns:
             Dict[str, Asset]: A dictionary of assets that matched filters.
         """
-        roles = roles or get_args(ML_AOI_Roles)
+        roles = roles or get_args(ML_AOI_Role)
         return {
             key: asset
             for key, asset in self.item.get_assets().items()
@@ -423,11 +423,11 @@ class ML_AOI_AssetExtension(
         return f"<ML_AOI_AssetExtension Asset href={self.asset_href}>"
     #
     # @property
-    # def role(self) -> Optional[ML_AOI_Roles]:
-    #     return self._get_property(add_ml_aoi_prefix("role"), ML_AOI_Roles)
+    # def role(self) -> Optional[ML_AOI_Role]:
+    #     return self._get_property(add_ml_aoi_prefix("role"), ML_AOI_Role)
     #
     # @role.setter
-    # def role(self, role: ML_AOI_Roles) -> None:
+    # def role(self, role: ML_AOI_Role) -> None:
     #     self._set_property(add_ml_aoi_prefix("role"), role)
     #
     # @property
