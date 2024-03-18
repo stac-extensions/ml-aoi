@@ -10,6 +10,7 @@ import json
 from datetime import datetime
 from typing import (
     Any,
+    Annotated,
     Generic,
     Iterable,
     List,
@@ -46,6 +47,7 @@ from pystac.extensions.base import (
 )
 from pystac.extensions.label import LabelRelType
 from pystac.extensions.hooks import ExtensionHooks
+from pystac.utils import StringEnum
 
 T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.AssetDefinition)
 SchemaName = Literal["ml-aoi"]
@@ -63,23 +65,71 @@ ML_AOI_SCHEMA_URI: str = ML_AOI_SCHEMA["$id"]
 ML_AOI_PREFIX = f"{ML_AOI_SCHEMA_ID}:"
 ML_AOI_PROPERTY = f"{ML_AOI_SCHEMA_ID}_".replace("-", "_")
 
-ML_AOI_Split = Literal["train", "validate", "test"]
-ML_AOI_Role = Literal["label", "feature"]
-ML_AOI_Resampling = Literal[
-    "near",
-    "bilinear",
-    "cubic",
-    "cubcspline",
-    "lanczos",
-    "average",
-    "rms",
-    "mode",
-    "max",
-    "min",
-    "med",
-    "q1",
-    "q3",
-    "sum"
+
+class ML_AOI_Split(StringEnum):
+    TRAIN: Literal["train"] = "train"
+    VALIDATE: Literal["validate"] = "validate"
+    TEST: Literal["test"] = "test"
+
+
+ML_AOI_SplitType = Union[
+    ML_AOI_Split,
+    Literal[
+        ML_AOI_Split.TRAIN,
+        ML_AOI_Split.VALIDATE,
+        ML_AOI_Split.TEST,
+    ]
+]
+
+
+class ML_AOI_Role(StringEnum):
+    LABEL: Literal["label"] = "label"
+    FEATURE: Literal["feature"] = "feature"
+
+
+ML_AOI_RoleType = Union[
+    ML_AOI_Role,
+    Literal[
+        ML_AOI_Role.LABEL,
+        ML_AOI_Role.FEATURE,
+    ]
+]
+
+
+class ML_AOI_Resampling(StringEnum):
+    NEAR: Literal["near"] = "near"
+    BILINEAR: Literal["bilinear"] = "bilinear"
+    CUBIC: Literal["cubic"] = "cubic"
+    CUBCSPLINE: Literal["cubcspline"] = "cubcspline"
+    LANCZOS: Literal["lanczos"] = "lanczos"
+    AVERAGE: Literal["average"] = "average"
+    RMS: Literal["rms"] = "rms"
+    MODE: Literal["mode"] = "mode"
+    MAX: Literal["max"] = "max"
+    MIN: Literal["min"] = "min"
+    MED: Literal["med"] = "med"
+    Q1: Literal["q1"] = "q1"
+    Q3: Literal["q3"] = "q3"
+    SUM: Literal["sum"] = "sum"
+
+
+ML_AOI_ResamplingType = Union[
+    Literal[
+        ML_AOI_Resampling.NEAR,
+        ML_AOI_Resampling.BILINEAR,
+        ML_AOI_Resampling.CUBIC,
+        ML_AOI_Resampling.CUBCSPLINE,
+        ML_AOI_Resampling.LANCZOS,
+        ML_AOI_Resampling.AVERAGE,
+        ML_AOI_Resampling.RMS,
+        ML_AOI_Resampling.MODE,
+        ML_AOI_Resampling.MAX,
+        ML_AOI_Resampling.MIN,
+        ML_AOI_Resampling.MED,
+        ML_AOI_Resampling.Q1,
+        ML_AOI_Resampling.Q3,
+        ML_AOI_Resampling.SUM,
+    ]
 ]
 
 # pystac references
@@ -163,14 +213,14 @@ class ML_AOI_Extension(
         raise NotImplementedError
 
     @abc.abstractmethod
-    def set_ml_aoi_property(self, prop_name: str, value: Any, _ml_aoi_required: bool) -> None:
+    def set_ml_aoi_property(self, prop_name: str, value: Any, _ml_aoi_required: bool, pop_if_none: bool = True) -> None:
         raise NotImplementedError
 
     def __getitem__(self, prop_name):
         return self.get_ml_aoi_property(prop_name, _ml_aoi_required=False)
 
     def __setattr__(self, prop_name, value):
-        self.set_ml_aoi_property(prop_name, value, _ml_aoi_required=False)
+        self.set_ml_aoi_property(prop_name, value, _ml_aoi_required=False, pop_if_none=True)
 
     @classmethod
     def _is_ml_aoi_property(cls, prop_name: str):
@@ -300,25 +350,35 @@ class ML_AOI_PropertiesExtension(
     ML_AOI_Extension[T],
     abc.ABC,
 ):
-
     def get_ml_aoi_property(self, prop_name: str, _ml_aoi_required: bool = True) -> list[Any]:
         self._retrieve_ml_aoi_property(prop_name, _ml_aoi_required)
         return self.properties.get(prop_name)
 
-    def set_ml_aoi_property(self, prop_name: str, value: Any, _ml_aoi_required: bool = True) -> None:
+    def set_ml_aoi_property(
+        self,
+        prop_name: str,
+        value: Any,
+        _ml_aoi_required: bool = True,
+        pop_if_none: bool = True,
+    ) -> None:
         field = self._retrieve_ml_aoi_property(prop_name, _ml_aoi_required)
         if field:
-            prop_name = field.alias or prop_name
+            # validation must be performed against the non-aliased field
+            # then, apply the alias for the actual assignment of the property
             self._validate_ml_aoi_property(prop_name, value)
-        super()._set_property(prop_name, value)
+            prop_name = field.alias or prop_name
+        if prop_name in dir(self) or prop_name in self.__annotations__:
+            object.__setattr__(self, prop_name, value)
+        else:
+            super()._set_property(prop_name, value, pop_if_none=pop_if_none)
 
     def _set_property(
         self, prop_name: str, v: Any, pop_if_none: bool = True
     ) -> None:
         if self._is_ml_aoi_property(prop_name):
-            self.set_ml_aoi_property(prop_name, pop_if_none, _ml_aoi_required=True)
+            self.set_ml_aoi_property(prop_name, v, _ml_aoi_required=True)
         else:
-            super()._set_property(prop_name, pop_if_none)
+            super()._set_property(prop_name, v, pop_if_none=pop_if_none)
 
 
 class ML_AOI_ItemExtension(
@@ -333,10 +393,12 @@ class ML_AOI_ItemExtension(
     :meth:`ML_AOI_Extension.ext` on an :class:`~pystac.Item` to extend it.
     """
     model = ML_AOI_ItemProperties
+    item: pystac.Item
+    properties: dict[str, Any]
 
     def __init__(self, item: pystac.Item):
-        self.item = item
         self.properties = item.properties
+        self.item = item
 
     def get_assets(
         self,

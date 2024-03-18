@@ -13,11 +13,17 @@ import shapely
 from dateutil.parser import parse as dt_parse
 from typing import cast
 
-from pystac.extensions.label import LabelExtension
-from pystac_ml_aoi.extensions.ml_aoi import ML_AOI_Extension, ML_AOI_SCHEMA_PATH, ML_AOI_SCHEMA_URI
+from pystac.extensions.label import LabelExtension, LabelTask, LabelType
+from pystac_ml_aoi.extensions.ml_aoi import (
+    ML_AOI_Extension,
+    ML_AOI_SCHEMA_PATH,
+    ML_AOI_SCHEMA_URI,
+    ML_AOI_Role,
+    ML_AOI_Split,
+)
 
 
-@pytest.fixture(scope="session", name="validator", autouse=True)
+@pytest.fixture(scope="session", name="stac_validator", autouse=True)
 def make_stac_ml_aoi_validator(
     request: pytest.FixtureRequest,
 ) -> pystac.validation.stac_validator.JsonSchemaSTACValidator:
@@ -31,12 +37,10 @@ def make_stac_ml_aoi_validator(
     """
     validator = pystac.validation.RegisteredValidator.get_validator()
     validator = cast(pystac.validation.stac_validator.JsonSchemaSTACValidator, validator)
-    validator.registry.with_contents([
-        (
-            ML_AOI_SCHEMA_URI,
-            json.loads(pystac.StacIO.default().read_text(ML_AOI_SCHEMA_PATH)),
-        )
-    ])
+    validation_schema = json.loads(pystac.StacIO.default().read_text(ML_AOI_SCHEMA_PATH))
+    validation_uri = ML_AOI_SCHEMA_URI.split("#")[0]
+    validator.schema_cache[validation_uri] = validation_schema
+    pystac.validation.RegisteredValidator.set_validator(validator)  # apply globally to allow 'STACObject.validate()'
     return validator
 
 
@@ -70,37 +74,14 @@ def make_base_stac_collection() -> pystac.Collection:
     return col
 
 
-def test_ml_aoi_pystac_collection_with_apply_method(collection: pystac.Collection):
+@pytest.fixture(scope="function", name="item")
+def make_base_stac_item() -> pystac.Item:
     """
-    Validate extending a STAC Collection with ML-AOI extension.
-    """
-    ml_aoi_col = ML_AOI_Extension.ext(collection, add_if_missing=True)
-    ml_aoi_col.apply(split=["train"])
-    assert ML_AOI_SCHEMA_URI in collection.stac_extensions
-    collection.validate()
-    ml_aoi_col_json = collection.to_dict()
-    assert ml_aoi_col_json["summaries"] == [{"ml-aoi:split": "train"}]
-
-
-def test_ml_aoi_pystac_collection_with_field_property(collection: pystac.Collection):
-    """
-    Validate extending a STAC Collection with ML-AOI extension.
-    """
-    ml_aoi_col = ML_AOI_Extension.ext(collection, add_if_missing=True)
-    ml_aoi_col.split = ["train"]
-    assert ML_AOI_SCHEMA_URI in collection.stac_extensions
-    collection.validate()
-    ml_aoi_col_json = collection.to_dict()
-    assert ml_aoi_col_json["summaries"] == [{"ml-aoi:split": "train"}]
-
-
-def test_ml_aoi_pystac_item():
-    """
-    Validate extending a STAC Collection with ML-AOI extension.
-
     Example reference STAC Item taken from:
     - https://github.com/stac-extensions/ml-aoi/blob/main/examples/item_EuroSAT-subset-train-sample-42-class-Residential.geojson
     - https://github.com/ai-extensions/stac-data-loader/blob/main/data/EuroSAT/stac/subset/train/item-42.json
+
+    The ML-AOI fields are to be extended by the various unit test functions.
     """
     geom = {
         "type": "Polygon",
@@ -139,12 +120,78 @@ def test_ml_aoi_pystac_item():
         datetime=None,
         properties={}
     )
-    item = LabelExtension.ext(item, add_if_missing=True)
-    item = ML_AOI_Extension.ext(item, add_if_missing=True)
-    #item = cast(item, Union[pystac.Item, LabelExtension, MLAOI_Extension])
-    item.apply(properties)
+    label_item = LabelExtension.ext(item, add_if_missing=True)
+    label_item.apply(
+        label_description="ml-aoi-test",
+        label_type=LabelType.RASTER,
+        label_tasks=[LabelTask.CLASSIFICATION],
+    )
+    return item
 
 
+def test_ml_aoi_pystac_collection_with_apply_method(
+    collection: pystac.Collection,
+    stac_validator: pystac.validation.stac_validator.JsonSchemaSTACValidator,
+) -> None:
+    """
+    Validate extending a STAC Collection with ML-AOI extension.
+    """
+    assert ML_AOI_SCHEMA_URI not in collection.stac_extensions
+    ml_aoi_col = ML_AOI_Extension.ext(collection, add_if_missing=True)
+    ml_aoi_col.apply(split=[ML_AOI_Split.TRAIN])
+    assert ML_AOI_SCHEMA_URI in collection.stac_extensions
+    collection.validate()
+    ml_aoi_col_json = collection.to_dict()
+    assert ml_aoi_col_json["summaries"] == [{"ml-aoi:split": "train"}]
 
-if __name__ == '__main__':
+
+def test_ml_aoi_pystac_collection_with_field_property(
+    collection: pystac.Collection,
+    stac_validator: pystac.validation.stac_validator.JsonSchemaSTACValidator,
+) -> None:
+    """
+    Validate extending a STAC Collection with ML-AOI extension.
+    """
+    assert ML_AOI_SCHEMA_URI not in collection.stac_extensions
+    ml_aoi_col = ML_AOI_Extension.ext(collection, add_if_missing=True)
+    ml_aoi_col.split = [ML_AOI_Split.TRAIN]
+    assert ML_AOI_SCHEMA_URI in collection.stac_extensions
+    collection.validate()
+    ml_aoi_col_json = collection.to_dict()
+    assert ml_aoi_col_json["summaries"] == [{"ml-aoi:split": "train"}]
+
+
+def test_ml_aoi_pystac_item_with_apply_method(
+    item: pystac.Item,
+    stac_validator: pystac.validation.stac_validator.JsonSchemaSTACValidator,
+) -> None:
+    """
+    Validate extending a STAC Collection with ML-AOI extension.
+    """
+    assert ML_AOI_SCHEMA_URI not in item.stac_extensions
+    ml_aoi_item = ML_AOI_Extension.ext(item, add_if_missing=True)
+    ml_aoi_item.apply(split=ML_AOI_Split.TRAIN)
+    assert ML_AOI_SCHEMA_URI in item.stac_extensions
+    item.validate()
+    ml_aoi_item_json = item.to_dict()
+    assert ml_aoi_item_json["properties"]["ml-aoi:split"] == "train"
+
+
+def test_ml_aoi_pystac_item_with_field_property(
+    item: pystac.Item,
+    stac_validator: pystac.validation.stac_validator.JsonSchemaSTACValidator,
+) -> None:
+    """
+    Validate extending a STAC Collection with ML-AOI extension.
+    """
+    assert ML_AOI_SCHEMA_URI not in item.stac_extensions
+    ml_aoi_item = ML_AOI_Extension.ext(item, add_if_missing=True)
+    ml_aoi_item.split = ML_AOI_Split.TRAIN
+    assert ML_AOI_SCHEMA_URI in item.stac_extensions
+    item.validate()
+    ml_aoi_item_json = item.to_dict()
+    assert ml_aoi_item_json["properties"]["ml-aoi:split"] == "train"
+
+
+if __name__ == "__main__":
     unittest.main()
