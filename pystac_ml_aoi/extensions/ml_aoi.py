@@ -61,7 +61,7 @@ with open(ML_AOI_SCHEMA_PATH, mode="r", encoding="utf-8") as schema_file:
     ML_AOI_SCHEMA = json.load(schema_file)
 
 ML_AOI_SCHEMA_ID: SchemaName = get_args(SchemaName)[0]
-ML_AOI_SCHEMA_URI: str = ML_AOI_SCHEMA["$id"]
+ML_AOI_SCHEMA_URI: str = ML_AOI_SCHEMA["$id"].split("#")[0]
 ML_AOI_PREFIX = f"{ML_AOI_SCHEMA_ID}:"
 ML_AOI_PROPERTY = f"{ML_AOI_SCHEMA_ID}_".replace("-", "_")
 
