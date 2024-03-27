@@ -5,7 +5,7 @@
 - **Field Name Prefix:** ml-aoi
 - **Scope:** Collection, Item, Asset, Links
 - **Extension [Maturity Classification](https://github.com/radiantearth/stac-spec/tree/master/extensions/README.md#extension-maturity):** Proposal
-- **Owner**: @echeipesh @kbgg @duckontheweb
+- **Owner**: @fmigneault @echeipesh @kbgg @duckontheweb
 
 This document explains the ML-AOI Extension to the [SpatioTemporal Asset Catalog](https://github.com/radiantearth/stac-spec) (STAC) specification.
 
