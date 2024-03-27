@@ -177,7 +177,7 @@ def test_ml_aoi_pystac_collection_with_apply_method(
     assert ML_AOI_SCHEMA_URI in collection.stac_extensions
     collection.validate()
     ml_aoi_col_json = collection.to_dict()
-    assert ml_aoi_col_json["summaries"] == [{"ml-aoi:split": "train"}]
+    assert ml_aoi_col_json["summaries"] == {"ml-aoi:split": ["train"]}
 
 
 def test_ml_aoi_pystac_collection_with_field_property(
@@ -193,7 +193,30 @@ def test_ml_aoi_pystac_collection_with_field_property(
     assert ML_AOI_SCHEMA_URI in collection.stac_extensions
     collection.validate()
     ml_aoi_col_json = collection.to_dict()
-    assert ml_aoi_col_json["summaries"] == [{"ml-aoi:split": "train"}]
+    assert ml_aoi_col_json["summaries"] == {"ml-aoi:split": ["train"]}
+
+
+def test_ml_aoi_pystac_collection_self_link_role(
+    collection: pystac.Collection,
+    stac_validator: pystac.validation.stac_validator.JsonSchemaSTACValidator,
+) -> None:
+    """
+    Validate extending a STAC Collection with ML-AOI extension.
+    """
+    assert ML_AOI_SCHEMA_URI not in collection.stac_extensions
+    ml_aoi_col = ML_AOI_Extension.ext(collection, add_if_missing=True)
+    ml_aoi_col.split = [ML_AOI_Split.TEST]
+    assert ML_AOI_SCHEMA_URI in collection.stac_extensions
+    ml_aoi_col.set_self_href("https://example.com/collections/test")
+    ml_aoi_col_json = collection.to_dict()
+    assert ml_aoi_col_json["summaries"] == {"ml-aoi:split": ["test"]}
+    ml_aoi_col_links = ml_aoi_col_json["links"]
+    assert any(link == {
+        "rel": "self",
+        "href": "https://example.com/collections/test",
+        "type": "application/json",
+        "ml-aoi:split": "test",
+    } for link in ml_aoi_col_links), ml_aoi_col_links
 
 
 def test_ml_aoi_pystac_item_with_apply_method(
@@ -238,8 +261,12 @@ def test_ml_aoi_pystac_item_filter_assets(
     assert ML_AOI_SCHEMA_URI not in item.stac_extensions
     ml_aoi_item = cast(ML_AOI_ItemExtension, ML_AOI_Extension.ext(item, add_if_missing=True))
     ml_aoi_item.split = ML_AOI_Split.TRAIN
+    assets = ml_aoi_item.get_assets()
+    assert len(assets) == 2 and list(assets) == ["label", "raster"]
     assets = ml_aoi_item.get_assets(reference_grid=True)
     assert len(assets) == 1 and "raster" in assets
+    assets = ml_aoi_item.get_assets(role=ML_AOI_Role.LABEL)
+    assert len(assets) == 1 and "label" in assets
 
 
 if __name__ == "__main__":
