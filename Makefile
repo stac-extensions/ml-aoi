@@ -198,9 +198,12 @@ conda-config: conda-base	## setup configuration of the conda environment
 	@ "$(CONDA_BIN)" config --append channels conda-forge
 
 .PHONY: conda-install
-conda-install: conda-env
-	@echo "Updating conda packages..."
-	@bash -c '$(CONDA_CMD) conda install -y -c conda-forge proj'
+conda-install:
+	@[ -z "$(CONDA_ENV)" ] && echo "Skipping conda environment setup [CONDA_ENV empty]" || ( \
+		echo "Setup conda environment..."; \
+		$(MAKE) -C "$(APP_ROOT)" conda-env \
+	)
+
 
 .PHONY: conda-env
 conda-env: conda-base conda-config	## create the conda environment
