@@ -13,7 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add `pystac_ml_aoi` Python package to provide similar capabilities to
   [`pystac.extensions`](https://github.com/stac-utils/pystac/tree/main/pystac/extensions) for ML-AOI.
-- Add unittests and CI workflow for validating `pystac_ml_aoi` utilities and definitions. 
+- Add GitHub Actions CI Workflow.
+- Add unittests for validating `pystac_ml_aoi` utilities and definitions.
+- Add unittests for validating `examples` STAC Collections and STAC Items against ML-AOI JSON-schema.
 
 ### Changed
 - n/a
