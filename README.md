@@ -8,7 +8,7 @@
 - **Field Name Prefix:** ml-aoi
 - **Scope:** Collection, Item, Asset, Links
 - **Extension [Maturity Classification](https://github.com/radiantearth/stac-spec/tree/master/extensions/README.md#extension-maturity):** Proposal
-- **Owner**: @echeipesh @kbgg @duckontheweb
+- **Owner**: @fmigneault @echeipesh @kbgg @duckontheweb
 <!--lint enable maximum-line-width-->
 
 This document explains the ML-AOI Extension to the
