@@ -7,39 +7,19 @@ Utilities to extend :mod:`pystac` objects with STAC ML-AOI extension.
 import abc
 import json
 import os
-from datetime import datetime
-from typing import (
-    Annotated,
-    Any,
-    Generic,
-    Iterable,
-    List,
-    Literal,
-    MutableMapping,
-    Optional,
-    Protocol,
-    Type,
-    TypeVar,
-    Union,
-    cast,
-    get_args
-)
+from typing import Any, Generic, Iterable, List, Literal, Optional, Protocol, TypeVar, Union, cast, get_args
 
-import pyessv
 import pystac
-import shapely.geometry.polygon
-from pydantic import AnyHttpUrl, BaseModel, ConfigDict, Field, FieldValidationInfo, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from pydantic.fields import FieldInfo
 from pystac.extensions import item_assets
 from pystac.extensions.base import (  # generic pystac.STACObject
     ExtensionManagementMixin,
-    P,
     PropertiesExtension,
     S,
     SummariesExtension
 )
 from pystac.extensions.hooks import ExtensionHooks
-from pystac.extensions.label import LabelRelType
 from pystac.utils import StringEnum
 
 T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.AssetDefinition)
