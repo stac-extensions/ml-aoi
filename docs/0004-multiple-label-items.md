@@ -15,9 +15,10 @@ STAC Items Links object is an array, so many label items could be linked to from
 
 ### Limiting to single label link
 
-Limiting to single label link however is appealing because the label item metadata could be copied over to `ml-aoi` Item.
-This would remove the need to follow the link for the label item during processing.
-In practice this would make each `ml-aoi` Item also a `label` Item, allowing for its re-use by tooling that understands `label`.
+Limiting to single label link however is appealing because the label item metadata could be copied over to `ml-aoi`
+Item. This would remove the need to follow the link for the label item during processing.
+In practice this would make each `ml-aoi` Item also a `label` Item, allowing for its re-use by tooling that
+understands `label`.
 
 If multi-class label dataset would be required there would have to be a mechanical pre-processing step of combining
 existing labels into a single STAC `label` item. This could mean either union of GeoJSON FeatureCollections per item or
@@ -37,12 +38,13 @@ from all the included labels into a single structure that could be interpreted b
 
 `ml-aoi` Items should be limited to linking to only a single label item.
 Requiring the consumer to interpret multiple label items pushed unreasonable complexity on the user.
-Additionally combining labels likely requires series of processing and validation steps.
+Additionally, combining labels likely requires series of processing and validation steps.
 Each one of those would likely require judgment calls and exceptions.
-For instance when combining building and fields label datasets the user should check that no building and field polygons overlap.
+For instance when combining building and fields label datasets the user should check that no building and field
+polygons overlap.
 
 It is not realistic to expect all possible requirements of that process to be expressed by a simple metadata structure.
-Therefore it is better to explicitly require the label combination as a separate process done by the user.
+Therefore, it is better to explicitly require the label combination as a separate process done by the user.
 The resulting label catalog can capture that design and iteration required for that process anyway.
 
 ## Consequences

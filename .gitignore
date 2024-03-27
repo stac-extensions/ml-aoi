@@ -1,6 +1,7 @@
-/package-lock.json
+package-lock.json
 /node_modules
 [Mm]akefile.config
 **/__pycache__
 *.egg-info
 *.py[cod]
+reports/
