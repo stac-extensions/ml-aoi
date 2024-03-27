@@ -700,7 +700,7 @@ docs: install-doc clean-docs docs-only	## generate HTML documentation with Sphin
 # if 'dry' is specified as target, any bumpversion call using 'BUMP_XARGS' will not apply changes
 BUMP_XARGS ?= --verbose --allow-dirty
 ifeq ($(filter dry, $(MAKECMDGOALS)), dry)
-	BUMP_XARGS := $(BUMP_XARGS) --dry-run
+	BUMP_XARGS := $(BUMP_XARGS) --dry-run --verbose --list
 endif
 .PHONY: dry
 dry: setup.cfg	## run 'bump' target without applying changes (dry-run) [make VERSION=<x.y.z> bump dry]
