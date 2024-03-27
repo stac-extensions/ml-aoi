@@ -5,26 +5,25 @@
 Test functionalities provided by :class:`MLAOI_Extension`.
 """
 import unittest
+from typing import cast
+
 import pystac
 import pytest
 import shapely
 from dateutil.parser import parse as dt_parse
-from typing import cast
-
 from pystac.extensions.label import LabelExtension, LabelTask, LabelType
+
 from pystac_ml_aoi.extensions.ml_aoi import (
+    ML_AOI_SCHEMA_URI,
     ML_AOI_Extension,
     ML_AOI_ItemExtension,
-    ML_AOI_SCHEMA_URI,
     ML_AOI_Role,
-    ML_AOI_Split,
+    ML_AOI_Split
 )
-
 
 EUROSAT_EXAMPLE_BASE_URL = "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT"
 EUROSAT_EXAMPLE_ASSET_ITEM_URL = (
-    EUROSAT_EXAMPLE_BASE_URL +
-    "/stac/subset/train/item-42.json"
+    f"{EUROSAT_EXAMPLE_BASE_URL}/stac/subset/train/item-42.json"
 )
 EUROSAT_EXAMPLE_ASSET_LABEL_URL = (
     EUROSAT_EXAMPLE_BASE_URL +
@@ -36,10 +35,46 @@ EUROSAT_EXAMPLE_ASSET_RASTER_URL = (
 )
 
 
+@pytest.fixture(scope="function", name="collection")
+def make_base_stac_collection() -> pystac.Collection:
+    """
+    Generates a sample STAC Collection with preloaded extensions relevant for testing ML-AOI.
+
+    Example reference STAC Collection taken from:
+
+    - https://github.com/stac-extensions/ml-aoi/blob/main/examples/collection_EuroSAT-subset-train.json
+    - https://github.com/ai-extensions/stac-data-loader/blob/main/data/EuroSAT/stac/subset/train/collection.json
+
+    The ML-AOI fields are to be extended by the various unit test functions.
+    """
+    ext = pystac.Extent(
+        spatial=pystac.SpatialExtent(
+            bboxes=[[-7.882190080512502, 37.13739173208318, 27.911651652899923, 58.21798141355221]],
+        ),
+        temporal=pystac.TemporalExtent(
+            intervals=[dt_parse("2015-06-27T10:25:31.456Z"), dt_parse("2017-06-14T00:00:00Z")],
+        ),
+    )
+    col = pystac.Collection(
+        id="EuroSAT-subset-train",
+        description=(
+            "EuroSAT dataset with labeled annotations for land-cover classification and associated imagery. "
+            "This collection represents samples part of the train split set for training machine learning algorithms."
+        ),
+        extent=ext,
+        license="MIT",
+        catalog_type=pystac.CatalogType.ABSOLUTE_PUBLISHED,
+    )
+    return col
+
+
 @pytest.fixture(scope="function", name="item")
 def make_base_stac_item() -> pystac.Item:
     """
+    Generates a sample STAC Item with preloaded extensions relevant for testing ML-AOI.
+
     Example reference STAC Item taken from:
+
     - https://github.com/stac-extensions/ml-aoi/blob/main/examples/item_EuroSAT-subset-train-sample-42-class-Residential.geojson
     - https://github.com/ai-extensions/stac-data-loader/blob/main/data/EuroSAT/stac/subset/train/item-42.json
 
@@ -48,30 +83,30 @@ def make_base_stac_item() -> pystac.Item:
     geom = {
         "type": "Polygon",
         "coordinates": [
-          [
             [
-              -3.1380012709408427,
-              51.531997746547134
-            ],
-            [
-              -3.1380012709408427,
-              51.53774085855159
-            ],
-            [
-              -3.1472537450112785,
-              51.53774085855159
-            ],
-            [
-              -3.1472537450112785,
-              51.531997746547134
-            ],
-            [
-              -3.1380012709408427,
-              51.531997746547134
+                [
+                    -3.1380012709408427,
+                    51.531997746547134
+                ],
+                [
+                    -3.1380012709408427,
+                    51.53774085855159
+                ],
+                [
+                    -3.1472537450112785,
+                    51.53774085855159
+                ],
+                [
+                    -3.1472537450112785,
+                    51.531997746547134
+                ],
+                [
+                    -3.1380012709408427,
+                    51.531997746547134
+                ]
             ]
-          ]
         ]
-      }
+    }
     bbox = list(shapely.geometry.shape(geom).bounds)
     asset_label = pystac.Asset(
         href=EUROSAT_EXAMPLE_ASSET_LABEL_URL,

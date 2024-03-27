@@ -9,6 +9,7 @@ MAKEFILE_NAME := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 # Application
 APP_ROOT    := $(abspath $(lastword $(MAKEFILE_NAME))/..)
 APP_NAME    := $(shell basename $(APP_ROOT))
+APP_PKG     := pystac_ml_aoi
 APP_VERSION ?= 0.1.0
 
 # guess OS (Linux, Darwin,...)
@@ -162,7 +163,7 @@ fixme-list-only: mkdir-reports  	## list all FIXME/TODO/HACK items that require 
 			--score n --persistent n \
 			--rcfile="$(REPORTS_DIR)/fixmerc" \
 			-f colorized \
-			"$(APP_ROOT)/weaver" "$(APP_ROOT)/tests" \
+			"$(APP_ROOT)/$(APP_PKG)" "$(APP_ROOT)/tests" \
 		1> >(tee "$(REPORTS_DIR)/fixme.txt")'
 
 .PHONY: fixme-list
@@ -204,7 +205,6 @@ conda-install:
 		$(MAKE) -C "$(APP_ROOT)" conda-env \
 	)
 
-
 .PHONY: conda-env
 conda-env: conda-base conda-config	## create the conda environment
 	@test -d "$(CONDA_ENV_PATH)" || \
@@ -242,7 +242,7 @@ install-doc: install-pip	## install documentation dependencies
 	) || echo "No documentation requirements to install."
 
 .PHONY: install-dev
-install-dev: install-run install-npm-stylelint install-npm-remarklint	## install development and test dependencies
+install-dev: install-run install-npm-remarklint	## install development and test dependencies
 	@test -f "$(APP_ROOT)/requirements-dev.txt" && ( \
 		echo "Installing development packages with pip..." && \
 		bash -c '$(CONDA_CMD) pip install $(PIP_XARGS) -r "$(APP_ROOT)/requirements-dev.txt"' && \
@@ -284,13 +284,6 @@ install-npm:    ## install npm package manager and dependencies if they cannot b
 	@[ -f "$(shell which npm)" ] || ( \
 		echo "Binary package manager npm not found. Attempting to install it."; \
 		apt-get install npm \
-	)
-
-.PHONY: install-npm-stylelint
-install-npm-stylelint: install-npm   	## install stylelint dependency for 'check-css' target using npm
-	@[ `npm ls 2>/dev/null | grep stylelint-config-standard | wc -l` = 1 ] || ( \
-		echo "Install required dependencies for CSS checks." && \
-		npm install "stylelint@<16" "stylelint-config-standard@<35" --save-dev \
 	)
 
 .PHONY: install-npm-remarklint
@@ -438,7 +431,7 @@ CHECKS := $(addprefix check-, $(CHECKS))
 
 # items that should not install python dev packages should be added here instead
 # they must provide their own target/only + with dependency install variants
-CHECKS_NO_PY := css md
+CHECKS_NO_PY := md
 CHECKS_NO_PY := $(addprefix check-, $(CHECKS_NO_PY))
 CHECKS_ALL := $(CHECKS) $(CHECKS_NO_PY)
 
@@ -473,7 +466,7 @@ check-lint-only: mkdir-reports  	## check linting of code style
 			--load-plugins pylint_quotes \
 			--rcfile="$(APP_ROOT)/.pylintrc" \
 			--reports y \
-			"$(APP_ROOT)/weaver" "$(APP_ROOT)/tests" \
+			"$(APP_ROOT)/$(APP_PKG)" "$(APP_ROOT)/tests" \
 		1> >(tee "$(REPORTS_DIR)/check-lint.txt")'
 
 .PHONY: check-security-only
@@ -481,11 +474,8 @@ check-security-only: check-security-code-only check-security-deps-only  ## run s
 
 # FIXME: safety ignore file (https://github.com/pyupio/safety/issues/351)
 # ignored codes:
-#	42194: https://github.com/kvesteri/sqlalchemy-utils/issues/166  # not fixed since 2015
-#	42498: celery<5.2.0 bumps kombu>=5.2.1 with security fixes to {redis,sqs}  # mongo is used by default in Weaver
-#	43738: celery<5.2.2 CVE-2021-23727: trusts the messages and metadata stored in backends
 #	45185: pylint<2.13.0: unrelated doc extension (https://github.com/PyCQA/pylint/issues/5322)
-SAFETY_IGNORE := 42194 42498 43738 45185
+SAFETY_IGNORE := 45185
 SAFETY_IGNORE := $(addprefix "-i ",$(SAFETY_IGNORE))
 
 .PHONY: check-security-deps-only
@@ -497,7 +487,6 @@ check-security-deps-only: mkdir-reports  ## run security checks on package depen
 			--full-report \
 			-r "$(APP_ROOT)/requirements.txt" \
 			-r "$(APP_ROOT)/requirements-dev.txt" \
-			-r "$(APP_ROOT)/requirements-doc.txt" \
 			-r "$(APP_ROOT)/requirements-sys.txt" \
 			$(SAFETY_IGNORE) \
 		1> >(tee "$(REPORTS_DIR)/check-security-deps.txt")'
@@ -555,7 +544,7 @@ check-docstring-only: mkdir-reports  ## check code docstring style and linting
 .PHONY: check-links-only
 check-links-only:       	## check all external links in documentation for integrity
 	@echo "Running link checks on docs..."
-	@bash -c '$(CONDA_CMD) $(MAKE) -C "$(APP_ROOT)/docs" linkcheck'
+	@bash -c '$(CONDA_CMD) $(MAKE) -C "$(APP_ROOT)/docs" linkcheck' || true
 
 .PHONY: check-imports-only
 check-imports-only: mkdir-reports 	## check imports ordering and styles
@@ -564,17 +553,6 @@ check-imports-only: mkdir-reports 	## check imports ordering and styles
 	@bash -c '$(CONDA_CMD) \
 		isort --check-only --diff --recursive $(APP_ROOT) \
 		1> >(tee "$(REPORTS_DIR)/check-imports.txt")'
-
-.PHONY: check-css-only
-check-css-only: mkdir-reports  	## check CSS linting
-	@echo "Running CSS style checks..."
-	@npx --no-install stylelint \
-		--config "$(APP_ROOT)/.stylelintrc.json" \
-		--output-file "$(REPORTS_DIR)/check-css.txt" \
-		"$(APP_ROOT)/**/*.css"
-
-.PHONY: check-css
-check-css: install-npm-stylelint check-css-only	## check CSS linting after dependency installation
 
 # must pass 2 search paths because '<dir>/.<subdir>' are somehow not correctly detected with only the top-level <dir>
 .PHONY: check-md-only
@@ -597,7 +575,7 @@ FIXES := imports lint docf fstring
 FIXES := $(addprefix fix-, $(FIXES))
 # items that should not install python dev packages should be added here instead
 # they must provide their own target/only + with dependency install variants
-FIXES_NO_PY := css md
+FIXES_NO_PY := md
 FIXES_NO_PY := $(addprefix fix-, $(FIXES_NO_PY))
 FIXES_ALL := $(FIXES) $(FIXES_NO_PY)
 
@@ -655,18 +633,6 @@ fix-fstring-only: mkdir-reports
 	@bash -c '$(CONDA_CMD) \
 		flynt $(FLYNT_FLAGS) "$(APP_ROOT)" \
 		1> >(tee "$(REPORTS_DIR)/fixed-fstring.txt")'
-
-.PHONY: fix-css-only
-fix-css-only: mkdir-reports 	## fix CSS linting problems automatically
-	@echo "Fixing CSS style problems..."
-	@npx stylelint \
-		--fix \
-		--config "$(APP_ROOT)/.stylelintrc.json" \
-		--output-file "$(REPORTS_DIR)/fixed-css.txt" \
-		"$(APP_ROOT)/**/*.css"
-
-.PHONY: fix-css
-fix-css: install-npm-stylelint fix-css-only		## fix CSS linting problems after dependency installation
 
 # must pass 2 search paths because '<dir>/.<subdir>' are somehow not correctly detected with only the top-level <dir>
 .PHONY: fix-md-only

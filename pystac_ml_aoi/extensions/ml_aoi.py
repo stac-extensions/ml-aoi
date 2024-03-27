@@ -5,12 +5,12 @@
 Utilities to extend :mod:`pystac` objects with STAC ML-AOI extension.
 """
 import abc
-import os
 import json
+import os
 from datetime import datetime
 from typing import (
-    Any,
     Annotated,
+    Any,
     Generic,
     Iterable,
     List,
@@ -22,31 +22,24 @@ from typing import (
     TypeVar,
     Union,
     cast,
-    get_args,
+    get_args
 )
-import shapely.geometry.polygon
 
 import pyessv
 import pystac
-from pydantic import (
-    AnyHttpUrl,
-    BaseModel,
-    ConfigDict,
-    Field,
-    FieldValidationInfo,
-    field_validator,
-    model_validator,
-)
+import shapely.geometry.polygon
+from pydantic import AnyHttpUrl, BaseModel, ConfigDict, Field, FieldValidationInfo, field_validator, model_validator
 from pydantic.fields import FieldInfo
 from pystac.extensions import item_assets
-from pystac.extensions.base import S, P  # generic pystac.STACObject
-from pystac.extensions.base import (
+from pystac.extensions.base import (  # generic pystac.STACObject
     ExtensionManagementMixin,
+    P,
     PropertiesExtension,
-    SummariesExtension,
+    S,
+    SummariesExtension
 )
-from pystac.extensions.label import LabelRelType
 from pystac.extensions.hooks import ExtensionHooks
+from pystac.extensions.label import LabelRelType
 from pystac.utils import StringEnum
 
 T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.AssetDefinition)
@@ -149,7 +142,9 @@ def add_ml_aoi_prefix(name: str) -> str:
 
 
 class ML_AOI_BaseFields(BaseModel, validate_assignment=True):
-    """ML-AOI base definition to validate fields and properties."""
+    """
+    ML-AOI base definition to validate fields and properties.
+    """
 
     model_config = ConfigDict(alias_generator=add_ml_aoi_prefix, populate_by_name=True, extra="ignore")
 
@@ -157,6 +152,7 @@ class ML_AOI_BaseFields(BaseModel, validate_assignment=True):
     def validate_one_of(self) -> "ML_AOI_BaseFields":
         """
         All fields are optional, but at least one is required.
+
         Additional ``ml-aoi:`` prefixed properties are allowed as well, but no additional validation is performed.
         """
         # note:
@@ -173,13 +169,17 @@ class ML_AOI_BaseFields(BaseModel, validate_assignment=True):
 
 
 class ML_AOI_ItemProperties(ML_AOI_BaseFields, validate_assignment=True):
-    """ML-AOI properties for STAC Items."""
+    """
+    ML-AOI properties for STAC Items.
+    """
 
     split: Optional[ML_AOI_Split]  # split is required since it is the only available field
 
 
 class ML_AOI_CollectionFields(ML_AOI_BaseFields, validate_assignment=True):
-    """ML-AOI properties for STAC Collections."""
+    """
+    ML-AOI properties for STAC Collections.
+    """
 
     split: Optional[List[ML_AOI_Split]]  # split is required since it is the only available field
 
@@ -273,8 +273,8 @@ class ML_AOI_Extension(
         ] = None,
         **extra_fields: Any,
     ) -> None:
-        """Applies ML-AOI Extension properties to the extended
-        :class:`~pystac.Item` or :class:`~pystac.Asset`.
+        """
+        Applies ML-AOI Extension properties to the extended :class:`~pystac.Item` or :class:`~pystac.Asset`.
         """
         if not fields:
             fields = {}
@@ -326,14 +326,13 @@ class ML_AOI_Extension(
 
     @classmethod
     def ext(cls, obj: T, add_if_missing: bool = False) -> "ML_AOI_Extension[T]":
-        """Extends the given STAC Object with properties from the
-        :stac-ext:`ML-AOI Extension <ml-aoi>`.
+        """
+        Extends the given STAC Object with properties from the :stac-ext:`ML-AOI Extension <ml-aoi>`.
 
         This extension can be applied to instances of :class:`~pystac.Item` or
         :class:`~pystac.Asset`.
 
         Raises:
-
             pystac.ExtensionTypeError : If an invalid object type is passed.
         """
         if isinstance(obj, pystac.Collection):
@@ -353,7 +352,9 @@ class ML_AOI_Extension(
 
     @classmethod
     def summaries(cls, obj: pystac.Collection, add_if_missing: bool = False) -> "ML_AOI_SummariesExtension":
-        """Returns the extended summaries object for the given collection."""
+        """
+        Returns the extended summaries object for the given collection.
+        """
         cls.ensure_has_extension(obj, add_if_missing)
         return ML_AOI_SummariesExtension(obj)
 
@@ -399,9 +400,11 @@ class ML_AOI_ItemExtension(
     ML_AOI_PropertiesExtension,
     ML_AOI_Extension[pystac.Item],
 ):
-    """A concrete implementation of :class:`ML_AOI_Extension` on an :class:`~pystac.Item`
-    that extends the properties of the Item to include properties defined in the
-    :stac-ext:`ML-AOI Extension <ml-aoi>`.
+    """
+    STAC Item extension for ML-AOI.
+
+    A concrete implementation of :class:`ML_AOI_Extension` on an :class:`~pystac.Item` that extends the properties of
+    the Item to include properties defined in the :stac-ext:`ML-AOI Extension <ml-aoi>`.
 
     This class should generally not be instantiated directly. Instead, call
     :meth:`ML_AOI_Extension.ext` on an :class:`~pystac.Item` to extend it.
@@ -422,7 +425,8 @@ class ML_AOI_ItemExtension(
         media_type: Optional[Union[pystac.MediaType, str]] = None,
         asset_role: Optional[str] = None,
     ) -> dict[str, pystac.Asset]:
-        """Get the item's assets where ``ml-aoi`` fields are matched.
+        """
+        Get the item's assets where ``ml-aoi`` fields are matched.
 
         Args:
             role: The ML-AOI role, or a list of roles to filter Assets.
@@ -484,9 +488,11 @@ class ML_AOI_AssetExtension(
     ML_AOI_PropertiesExtension,
     ML_AOI_Extension[pystac.Asset],
 ):
-    """A concrete implementation of :class:`ML_AOI_Extension` on an :class:`~pystac.Asset`
-    that extends the Asset fields to include properties defined in the
-    :stac-ext:`ML-AOI Extension <ml-aoi>`.
+    """
+    Asset extension for ML-AOI.
+
+    A concrete implementation of :class:`ML_AOI_Extension` on an :class:`~pystac.Asset` that extends the Asset fields to
+    include properties defined in the :stac-ext:`ML-AOI Extension <ml-aoi>`.
 
     This class should generally not be instantiated directly. Instead, call
     :meth:`ML_AOI_Extension.ext` on an :class:`~pystac.Asset` to extend it.
@@ -533,9 +539,11 @@ class ML_AOI_SummariesExtension(
     SummariesExtension,
     ML_AOI_Extension[pystac.Collection],
 ):
-    """A concrete implementation of :class:`~SummariesExtension` that extends
-    the ``summaries`` field of a :class:`~pystac.Collection` to include properties
-    defined in the :stac-ext:`ML-AOI <ml-aoi>`.
+    """
+    Summaries extension for ML-AOI.
+
+    A concrete implementation of :class:`~SummariesExtension` that extends the ``summaries`` field of a
+    :class:`~pystac.Collection` to include properties defined in the :stac-ext:`ML-AOI <ml-aoi>`.
     """
     model = ML_AOI_CollectionFields
 
@@ -610,7 +618,8 @@ class ML_AOI_CollectionExtension(
         return f"<ML_AOI_CollectionExtension Collection id={self.collection.id}>"
 
     def set_self_href(self, href: Optional[str]) -> None:
-        """Sets the absolute HREF that is represented by the ``rel == 'self'`` :class:`~pystac.Link`.
+        """
+        Sets the absolute HREF that is represented by the ``rel == 'self'`` :class:`~pystac.Link`.
 
         Adds the relevant ML-AOI role applicable for the Collection.
         """

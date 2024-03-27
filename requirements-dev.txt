@@ -1,2 +1,10 @@
+bandit
 bump2version
+doc8
+docformatter
+flake8
+flynt
+isort
+pylint
 pytest
+safety
