@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 """
 Tests all files in the `examples` directory against the JSON-schema.
 """

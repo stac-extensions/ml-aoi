@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 """
 Utilities to extend :mod:`pystac` objects with STAC ML-AOI extension.
 """
@@ -480,14 +479,20 @@ class ML_AOI_AssetExtension(
     model = ML_AOI_AssetFields
 
     asset_href: str
-    """The ``href`` value of the :class:`~pystac.Asset` being extended."""
+    """
+    The ``href`` value of the :class:`~pystac.Asset` being extended.
+    """
 
     properties: dict[str, Any]
-    """The :class:`~pystac.Asset` fields, including extension properties."""
+    """
+    The :class:`~pystac.Asset` fields, including extension properties.
+    """
 
     additional_read_properties: Optional[Iterable[dict[str, Any]]] = None
-    """If present, this will be a list containing 1 dictionary representing the
-    properties of the owning :class:`~pystac.Item`."""
+    """
+    If present, this will be a list containing 1 dictionary representing the properties of the owning
+    :class:`~pystac.Item`.
+    """
 
     def __init__(self, asset: pystac.Asset):
         self.asset_href = asset.href

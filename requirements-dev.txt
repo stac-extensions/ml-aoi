@@ -5,6 +5,9 @@ docformatter
 flake8
 flynt
 isort
-pylint
+pydocstyle
+pylint<3
+pylint-per-file-ignores
+pylint_quotes
 pytest
 safety

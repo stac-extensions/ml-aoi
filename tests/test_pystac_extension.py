@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 """
 Test functionalities provided by :class:`MLAOI_Extension`.
 """
@@ -70,6 +69,7 @@ def make_base_stac_collection() -> pystac.Collection:
 
 @pytest.fixture(scope="function", name="item")
 def make_base_stac_item() -> pystac.Item:
+    # pylint: disable=line-too-long
     """
     Generates a sample STAC Item with preloaded extensions relevant for testing ML-AOI.
 
