@@ -1,0 +1,13 @@
+bandit
+bump2version
+doc8
+docformatter
+flake8
+flynt
+isort
+pydocstyle
+pylint<3
+pylint-per-file-ignores
+pylint_quotes
+pytest
+safety

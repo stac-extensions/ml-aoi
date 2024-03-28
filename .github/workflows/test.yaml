@@ -1,6 +1,80 @@
-name: Check Markdown and Examples
-on: [push, pull_request]
+name: Check Documentation and Run Tests
+on:
+  - push
+  - pull_request
+  - workflow_dispatch
+
+# cancel the current workflow if another commit was pushed on the same PR or reference
+# uses the GitHub workflow name to avoid collision with other workflows running on the same PR/reference
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  # see: https://github.com/fkirc/skip-duplicate-actions
+  skip_duplicate:
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_duplicate.outputs.should_skip && ! contains(github.ref, 'refs/tags') }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@master
+        with:
+          concurrent_skipping: "same_content_newer"
+          skip_after_successful_duplicate: "true"
+          do_not_skip: '["pull_request", "workflow_dispatch", "schedule", "release"]'
+
+  # see: https://github.com/actions/setup-python
+  tests:
+    needs: skip_duplicate
+    if: ${{ needs.skip_duplicate.outputs.should_skip != 'true' }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.allow-failure }}
+    env:
+      # override make command to install directly in active python
+      CONDA_CMD: ""
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ "3.9", "3.10", "3.11", "3.12" ]
+        allow-failure: [ false ]
+        test-case: [ test-unit-only ]
+        include:
+          # linter tests
+          - os: ubuntu-latest
+            python-version: "3.10"
+            allow-failure: false
+            test-case: check-only
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: "0"
+      - name: Setup Python
+        # skip python setup if running with docker
+        if: ${{ matrix.test-case != 'test-docker' }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: "${{ matrix.python-version }}"
+      - name: Parse Python Version
+        id: python-semver
+        run: |
+          echo "::set-output name=major:$(echo ${{ matrix.python-version }} | cut -d '.' -f 1)"
+          echo "::set-output name=minor:$(echo ${{ matrix.python-version }} | cut -d '.' -f 2)"
+      - name: Install Dependencies
+        # install package and dependencies directly,
+        # skip sys/conda setup to use active python
+        run: make install-dev version
+      - name: Display Packages
+        run: pip freeze
+      - name: Display Environment Variables
+        run: |
+          hash -r
+          env | sort
+      - name: Run Tests
+        run: make ${{ matrix.test-case }}
+
   deploy:
     runs-on: ubuntu-latest
     steps:

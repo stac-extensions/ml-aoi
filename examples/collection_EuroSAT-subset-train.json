@@ -1,0 +1,551 @@
+{
+  "stac_version": "1.0.0",
+  "stac_extensions": [
+    "https://stac-extensions.github.io/eo/v1.1.0/schema.json",
+    "https://stac-extensions.github.io/ml-aoi/v0.1.0/schema.json",
+    "https://stac-extensions.github.io/scientific/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/stats/v0.2.0/schema.json",
+    "https://stac-extensions.github.io/version/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/view/v1.0.0/schema.json"
+  ],
+  "type": "Collection",
+  "id": "EuroSAT-subset-train",
+  "title": "EuroSAT subset train",
+  "description": "EuroSAT dataset with labeled annotations for land-cover classification and associated imagery. This collection represents the samples part of the train split set for training machine learning algorithms.",
+  "version": "0.5.0",
+  "experimental": true,
+  "license": "MIT",
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          -7.882190080512502,
+          37.13739173208318,
+          27.911651652899923,
+          58.21798141355221
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2015-06-27T10:25:31.456Z",
+          "2017-06-14T00:00:00Z"
+        ]
+      ]
+    }
+  },
+  "summaries": {
+    "sci:doi": [
+      "10.1109/JSTARS.2019.2918242"
+    ],
+    "sci:citation": [
+      "Eurosat: A novel dataset and deep learning benchmark for land use and land cover classification. Patrick Helber, Benjamin Bischke, Andreas Dengel, Damian Borth. IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing, 2019."
+    ],
+    "sci:publications": [
+      {
+        "doi": "10.1109/IGARSS.2018.8519248",
+        "citation": "Introducing EuroSAT: A Novel Dataset and Deep Learning Benchmark for Land Use and Land Cover Classification. Patrick Helber, Benjamin Bischke, Andreas Dengel. 2018 IEEE International Geoscience and Remote Sensing Symposium, 2018."
+      }
+    ],
+    "ml-aoi:split": [
+      "train"
+    ],
+    "constellation": [
+      "sentinel-2"
+    ],
+    "instruments": [
+      "msi"
+    ],
+    "eo:bands": [
+      {
+        "name": "B01",
+        "common_name": "coastal",
+        "center_wavelength": 0.4439,
+        "full_width_half_max": 0.027
+      },
+      {
+        "name": "B02",
+        "common_name": "blue",
+        "center_wavelength": 0.4966,
+        "full_width_half_max": 0.098
+      },
+      {
+        "name": "B03",
+        "common_name": "green",
+        "center_wavelength": 0.56,
+        "full_width_half_max": 0.045
+      },
+      {
+        "name": "B04",
+        "common_name": "red",
+        "center_wavelength": 0.6645,
+        "full_width_half_max": 0.038
+      },
+      {
+        "name": "B05",
+        "center_wavelength": 0.7039,
+        "full_width_half_max": 0.019,
+        "common_name": "rededge"
+      },
+      {
+        "name": "B06",
+        "center_wavelength": 0.7402,
+        "full_width_half_max": 0.018,
+        "common_name": "rededge"
+      },
+      {
+        "name": "B07",
+        "center_wavelength": 0.7825,
+        "full_width_half_max": 0.028,
+        "common_name": "rededge"
+      },
+      {
+        "name": "B08",
+        "common_name": "nir",
+        "center_wavelength": 0.8351,
+        "full_width_half_max": 0.145
+      },
+      {
+        "name": "B08A",
+        "center_wavelength": 0.8648,
+        "full_width_half_max": 0.033,
+        "common_name": "nir08"
+      },
+      {
+        "name": "B09",
+        "center_wavelength": 0.945,
+        "full_width_half_max": 0.026,
+        "common_name": "nir09"
+      },
+      {
+        "name": "B10",
+        "common_name": "cirrus",
+        "center_wavelength": 1.3735,
+        "full_width_half_max": 0.075
+      },
+      {
+        "name": "B11",
+        "common_name": "swir16",
+        "center_wavelength": 1.6137,
+        "full_width_half_max": 0.143
+      },
+      {
+        "name": "B12",
+        "common_name": "swir22",
+        "center_wavelength": 2.22024,
+        "full_width_half_max": 0.242
+      }
+    ],
+    "view:off_nadir": [
+      0
+    ],
+    "gsd": [
+      10
+    ]
+  },
+  "assets": {
+    "source": {
+      "href": "https://github.com/phelber/EuroSAT/",
+      "type": "text/html",
+      "roles": [
+        "data",
+        "source",
+        "scientific",
+        "citation"
+      ],
+      "title": "GitHub repository",
+      "description": "Source GitHub repository of the EuroSAT dataset.",
+      "sci:doi": "10.1109/JSTARS.2019.2918242"
+    },
+    "paper": {
+      "href": "https://www.researchgate.net/publication/319463676",
+      "type": "text/html",
+      "roles": [
+        "paper",
+        "scientific",
+        "citation"
+      ],
+      "title": "Scientific Paper",
+      "description": "ResearchGate page with embedded PDF of the scientific paper supporting the dataset.",
+      "sci:doi": "10.1109/JSTARS.2019.2918242"
+    },
+    "thumbnail": {
+      "href": "https://raw.githubusercontent.com/phelber/EuroSAT/master/eurosat_overview_small.jpg",
+      "type": "image/jpeg",
+      "roles": [
+        "thumbnail",
+        "overview"
+      ],
+      "description": "Preview of dataset samples.",
+      "sci:doi": "10.1109/JSTARS.2019.2918242"
+    },
+    "license": {
+      "href": "https://raw.githubusercontent.com/phelber/EuroSAT/master/LICENSE",
+      "type": "text/plain",
+      "roles": [
+        "legal",
+        "license"
+      ],
+      "title": "License",
+      "description": "License contents associated to the EuroSAT dataset.",
+      "sci:doi": "10.1109/JSTARS.2019.2918242"
+    }
+  },
+  "stats:items": {
+    "count": 60
+  },
+  "links": [
+    {
+      "rel": "cite-as",
+      "href": "https://arxiv.org/abs/1709.00029",
+      "type": "text/html",
+      "title": "EuroSAT: A Novel Dataset and Deep Learning Benchmark for Land Use and Land Cover Classification"
+    },
+    {
+      "rel": "license",
+      "href": "https://raw.githubusercontent.com/phelber/EuroSAT/master/LICENSE",
+      "type": "text/html",
+      "title": "EuroSAT: A Novel Dataset and Deep Learning Benchmark for Land Use and Land Cover Classification"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-0.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-1.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-2.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-3.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-4.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-5.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-6.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-7.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-8.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-9.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-10.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-11.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-12.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-13.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-14.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-15.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-16.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-17.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-18.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-19.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-20.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-21.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-22.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-23.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-24.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-25.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-26.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-27.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-28.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-29.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-30.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-31.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-32.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-33.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-34.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-35.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-36.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-37.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-38.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-39.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-40.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-41.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-42.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-43.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-44.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-45.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-46.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-47.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-48.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-49.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-50.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-51.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-52.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-53.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-54.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-55.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-56.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-57.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-58.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "item",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/item-59.json",
+      "type": "application/geo+json"
+    },
+    {
+      "rel": "root",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/catalog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "self",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/collection.json",
+      "type": "application/json",
+      "title": "EuroSAT STAC Collection with samples from 'train' split.",
+      "ml-aoi:split": "train"
+    },
+    {
+      "rel": "collection",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/train/collection.json",
+      "type": "application/json",
+      "title": "EuroSAT STAC Collection with samples from 'train' split.",
+      "ml-aoi:split": "train"
+    },
+    {
+      "rel": "related",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/test/collection.json",
+      "type": "application/json",
+      "title": "EuroSAT STAC Collection with samples from 'train' split.",
+      "ml-aoi:split": "test"
+    },
+    {
+      "rel": "related",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/validate/collection.json",
+      "type": "application/json",
+      "title": "EuroSAT STAC Collection with samples from 'train' split.",
+      "ml-aoi:split": "validate"
+    },
+    {
+      "rel": "parent",
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.5.0/data/EuroSAT/stac/subset/catalog.json",
+      "type": "application/json",
+      "title": "STAC Catalog"
+    }
+  ]
+}
