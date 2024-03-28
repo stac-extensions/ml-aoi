@@ -1,4 +1,4 @@
-<!--lint disable heading-style-->
+<!--lint disable heading-style no-duplicate-headings-->
 
 # Changelog
 
@@ -10,20 +10,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [Unreleased](https://github.com/stac-extensions/ml-aoi/compare/v0.2.0...HEAD) (latest)
 ---------------------------------------------------------------------------------------
 
+### Added
 - n/a
 
+### Changed
 - n/a
 
+### Deprecated
 - n/a
 
+### Removed
 - n/a
 
+### Fixed
 - n/a
 
 .. _changes_0.2.0:
 
 [v0.2.0](https://github.com/stac-extensions/ml-aoi/tree/v0.2.0) (2024-03-28)
-========================================================================
+---------------------------------------------------------------------------------------
 
 ### Added
 - Add `pystac_ml_aoi` Python package to provide similar capabilities to
@@ -45,6 +50,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix syntax and format of all Markdown files.
 
 [v0.1.0](https://github.com/stac-extensions/ml-aoi/tree/v0.1.0) (2021-04-29)
-========================================================================
+---------------------------------------------------------------------------------------
 
 Initial independent release.
