@@ -4,7 +4,7 @@
 
 <!--lint disable maximum-line-width-->
 - **Title:** ML AOI
-- **Identifier:** [https://stac-extensions.github.io/ml-aoi/v0.1.0/schema.json](https://stac-extensions.github.io/ml-aoi/v0.1.0/schema.json)
+- **Identifier:** [https://stac-extensions.github.io/ml-aoi/v0.2.0/schema.json](https://stac-extensions.github.io/ml-aoi/v0.2.0/schema.json)
 - **Field Name Prefix:** ml-aoi
 - **Scope:** Collection, Item, Asset, Links
 - **Extension [Maturity Classification](https://github.com/radiantearth/stac-spec/tree/master/extensions/README.md#extension-maturity):** Proposal

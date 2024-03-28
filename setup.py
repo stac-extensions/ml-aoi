@@ -85,7 +85,7 @@ AUTHORS = {
 }
 
 # this is automatically updated by 'make bump'
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 
 setup(
     name="pystac-ml-aoi",
