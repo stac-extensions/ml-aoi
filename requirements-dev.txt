@@ -9,5 +9,6 @@ pydocstyle
 pylint<3
 pylint-per-file-ignores
 pylint_quotes
+pystac>=1.10.0  # requried for custom STAC validator (see https://github.com/stac-utils/pystac/pull/1320)
 pytest
 safety

@@ -1,4 +1,3 @@
 jsonschema
-# FIXME: temporarily refer to the validator feature until released (https://github.com/stac-utils/pystac/pull/1320)
-pystac @ git+https://github.com/crim-ca/pystac@custom-validator
+pystac
 shapely
